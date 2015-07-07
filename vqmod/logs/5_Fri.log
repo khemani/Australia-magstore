@@ -1,0 +1,26 @@
+---------- Date: 2015-04-10 07:35:13 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /admin/index.php?route=catalog/product/update&amp;token=224c8d97a6d9eb77b6163ed496aedb6e&amp;product_id=695
+VQMod::_parseMods - DOM UNABLE TO LOAD: /home/indiazinesmaga/public_html/vqmod/xml/myoc_pod.xml
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-04-10 08:50:45 ~ IP : 66.249.65.131 ----------
+REQUEST URI : /index.php?route=product/category&amp;path=84
+VQMod::_parseMods - DOM UNABLE TO LOAD: /home/indiazinesmaga/public_html/vqmod/xml/myoc_pod.xml
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-04-10 09:50:45 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /index.php?route=checkout/cart
+MOD DETAILS:
+   modFile   : /home/indiazinesmaga/public_html/vqmod/xml/myoc_pod.xml
+   id        : Product Option Discount - OpenCart.my
+   version   : 1.5
+   vqmver    : 2.3.0
+   author    : hydrowire
+
+File Name    : system/library/cart.php(2)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): data[$key] = array(
+----------------------------------------------------------------------
+
+

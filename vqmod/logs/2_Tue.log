@@ -1,0 +1,124 @@
+---------- Date: 2015-02-17 11:53:29 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=product/product&amp;product_id=30&amp;search=india+today
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/boss_rich_snippets.xml
+   id        : Boss Rich Snippets
+   version   : 1.0.0
+   vqmver    : 2.3.0
+   author    : bossthemes
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <h1
+
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+   id        : Product Option Discount - OpenCart.my
+   version   : 1.5
+   vqmver    : 2.3.0
+   author    : hydrowire
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <?php foreach ($option['option_value'] as $option_value)
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-02-17 11:55:35 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=product/product&amp;product_id=30&amp;search=india+today
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/boss_rich_snippets.xml
+   id        : Boss Rich Snippets
+   version   : 1.0.0
+   vqmver    : 2.3.0
+   author    : bossthemes
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <h1
+
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+   id        : Product Option Discount - OpenCart.my
+   version   : 1.5
+   vqmver    : 2.3.0
+   author    : hydrowire
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <?php foreach ($option['option_value'] as $option_value)
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-02-17 11:59:02 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=product/product&amp;product_id=30&amp;search=india+today
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+   id        : Product Option Discount - OpenCart.my
+   version   : 1.5
+   vqmver    : 2.3.0
+   author    : hydrowire
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(4)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <?php echo $content_bottom; ?>
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-02-17 12:16:17 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=product/product&amp;product_id=30&amp;search=india+today
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/boss_rich_snippets.xml
+   id        : Boss Rich Snippets
+   version   : 1.0.0
+   vqmver    : 2.3.0
+   author    : bossthemes
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <h1
+
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+   id        : Product Option Discount - OpenCart.my
+   version   : 1.5
+   vqmver    : 2.3.0
+   author    : hydrowire
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <?php foreach ($option['option_value'] as $option_value)
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-02-17 12:20:04 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=product/product&amp;product_id=30&amp;search=india+today
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/boss_rich_snippets.xml
+   id        : Boss Rich Snippets
+   version   : 1.0.0
+   vqmver    : 2.3.0
+   author    : bossthemes
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <h1
+
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+   id        : Product Option Discount - OpenCart.my
+   version   : 1.5
+   vqmver    : 2.3.0
+   author    : hydrowire
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <?php foreach ($option['option_value'] as $option_value)
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-02-17 12:37:32 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=checkout/cart
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+   id        : Product Option Discount - OpenCart.my
+   version   : 1.5
+   vqmver    : 2.3.0
+   author    : hydrowire
+
+File Name    : catalog/view/theme/*/template/*/cart.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <?php echo $option['value']; ?>
+----------------------------------------------------------------------
+
+

@@ -1,0 +1,80 @@
+---------- Date: 2015-02-11 10:03:36 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=product/product&amp;product_id=30
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+   id        : Product Option Discount - OpenCart.my
+   version   : 1.5
+   vqmver    : 2.3.0
+   author    : hydrowire
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <select name="option[
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-02-11 10:28:15 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=product/product&amp;product_id=30
+VQMod::_parseMods - DOM UNABLE TO LOAD: /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-02-11 10:43:16 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=product/product&amp;product_id=30
+VQMod::_parseMods - DOM UNABLE TO LOAD: /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-02-11 10:44:36 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=product/product&amp;product_id=30
+VQMod::_parseMods - DOM UNABLE TO LOAD: /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-02-11 10:51:20 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=product/product&amp;product_id=30
+VQMod::_parseMods - DOM UNABLE TO LOAD: /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-02-11 11:04:30 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=product/product&amp;product_id=30
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+   id        : Product Option Discount - OpenCart.my
+   version   : 1.5
+   vqmver    : 2.3.0
+   author    : hydrowire
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <select name="option[
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-02-11 11:07:27 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=product/product&amp;product_id=30
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+   id        : Product Option Discount - OpenCart.my
+   version   : 1.5
+   vqmver    : 2.3.0
+   author    : hydrowire
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <select name="option[
+----------------------------------------------------------------------
+
+
+---------- Date: 2015-02-11 11:12:54 ~ IP : 122.160.13.170 ----------
+REQUEST URI : /magazinesindia/index.php?route=product/product&amp;product_id=30
+MOD DETAILS:
+   modFile   : /home/cyberworx/public_html/linkdemo.in/magazinesindia/vqmod/xml/myoc_pod.xml
+   id        : Product Option Discount - OpenCart.my
+   version   : 1.5
+   vqmver    : 2.3.0
+   author    : hydrowire
+
+File Name    : catalog/view/theme/*/template/product/product.tpl(0)
+VQModObject::applyMod - SEARCH NOT FOUND (ABORTING MOD): <select name="option[
+----------------------------------------------------------------------
+
+

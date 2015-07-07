@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<modification>
+	<id>Product Option Discount - OpenCart.my</id>
+	<version>1.5</version>
+	<vqmver>2.3.0</vqmver>
+	<author>hydrowire</author>
+	<file name="admin/model/catalog/product.php">
+		<operation> <!-- insert new POD entry -->
+			<search position="after"><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "product_option_value]]></search>
+			<add><![CDATA[if(!isset($product_option_value_id)) {
+					$product_option_value_id = $this->db->getLastId();
+				} else {
+					$temp_povid = $this->db->getLastId();
+					$pod_check_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "myoc_pod WHERE product_option_value_id = '" . (int)$product_option_value_id . "'");
+					if($pod_check_query->num_rows) {
+						$product_option_value_id = $temp_povid;
+					} else {
+						$pov_check_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "product_option_value WHERE product_option_value_id = '" . (int)$temp_povid . "'");
+						if($pov_check_query->num_rows) {
+							$product_option_value_id = $temp_povid;
+						}
+					}
+				}//echo 'poddd'.$product_option_value_id;
+				if(isset($product_option_value['pod']) && !empty($product_option_value['pod'])) {
+					foreach($product_option_value['pod'] as $pod) {
+						$this->db->query("INSERT INTO " . DB_PREFIX . "myoc_pod SET 
+							product_option_value_id	= '" . (int)$product_option_value_id . "',
+							customer_group_id		= '" . (int)$pod['customer_group_id'] . "',
+							quantity				= '" . (int)$pod['quantity'] . "',
+							option_base_price		= '" . (isset($pod['option_base_price']) && $pod['option_base_price'] ? 1 : 0) . "',
+							price					= '" . (float)$pod['price'] . "',
+							price_prefix			= '" . $this->db->escape($pod['price_prefix']) . "',
+							special					= '" . (float)$pod['special'] . "',
+							special_prefix			= '" . $this->db->escape($pod['special_prefix']) . "',
+							option_base_points		= '" . (isset($pod['option_base_points']) && $pod['option_base_points'] ? 1 : 0) . "',
+							points					= '" . (int)$pod['points'] . "',
+							points_prefix			= '" . $this->db->escape($pod['points_prefix']) . "',
+							priority				= '" . (int)$pod['priority'] . "',
+							date_start				= '" . $this->db->escape($pod['date_start']) . "',
+							date_end				= '" . $this->db->escape($pod['date_end']) . "'");
+					}
+				}]]></add>
+		</operation>
+		<operation> <!-- insert new POD setting entry -->
+			<search position="after"><![CDATA[$product_option_id = $this->db->getLastId();]]></search>
+			<add><![CDATA[$this->db->query("INSERT INTO " . DB_PREFIX . "myoc_pod_setting SET
+					product_option_id = '" . (int)$product_option_id . "',
+					show_price_product = '" . (int)$product_option['show_price_product'] . "',
+					show_price_cart = '" . (int)$product_option['show_price_cart'] . "',
+					show_final = '" . (int)$product_option['show_final'] . "',
+					table_style = '" . $this->db->escape($product_option['table_style']) . "',
+					price_format = '" . $this->db->escape($product_option['price_format']) . "',
+					qty_column = '" . (int)$product_option['qty_column'] . "',
+					qty_format = '" . $this->db->escape($product_option['qty_format']) . "',
+					stock_column = '" . (int)$product_option['stock_column'] . "',
+					qty_cart = '" . (int)$product_option['qty_cart'] . "',
+					flat_rate = '" . (int)$product_option['flat_rate'] . "'");]]></add>
+		</operation>
+		<operation> <!-- delete POD setting entry -->
+			<search position="before"><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "product_option WHERE product_id = '" . (int)$product_id . "'");]]></search>
+			<add><![CDATA[$po_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "product_option` WHERE product_id = '" . (int)$product_id . "'");
+				if($po_query->num_rows) {
+					foreach($po_query->rows as $product_option) {
+						$this->db->query("DELETE FROM `" . DB_PREFIX . "myoc_pod_setting` WHERE product_option_id = '" . (int)$product_option['product_option_id'] . "'");
+					}
+				}]]></add>
+		</operation>
+		<operation> <!-- delete POD entry -->
+			<search position="before"><![CDATA[$this->db->query("DELETE FROM " . DB_PREFIX . "product_option_value WHERE product_id = '" . (int)$product_id . "'");]]></search>
+			<add><![CDATA[$pov_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "product_option_value` WHERE product_id = '" . (int)$product_id . "'");
+				if($pov_query->num_rows) {
+					foreach($pov_query->rows as $product_option_value) {
+						$this->db->query("DELETE FROM `" . DB_PREFIX . "myoc_pod` WHERE product_option_value_id = '" . (int)$product_option_value['product_option_value_id'] . "'");
+					}
+				}]]></add>
+		</operation>
+		<operation> <!-- query POD setting -->
+			<search position="after"><![CDATA[foreach ($product_option_query->rows as $product_option)]]></search>
+			<add><![CDATA[$pod_setting_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "myoc_pod_setting` WHERE product_option_id = '" . (int)$product_option['product_option_id'] . "'");
+				$product_option['show_price_product'] = false;
+				$product_option['show_price_cart'] = false;
+				$product_option['show_final'] = false;
+				$product_option['table_style'] = false;
+				$product_option['price_format'] = false;
+				$product_option['qty_column'] = false;
+				$product_option['qty_format'] = false;
+				$product_option['stock_column'] = false;
+				$product_option['qty_cart'] = false;
+				$product_option['flat_rate'] = false;
+				if($pod_setting_query->num_rows) {
+					$product_option = array_merge($product_option, $pod_setting_query->row);
+				}]]></add>
+		</operation>
+		<operation> <!-- query POD -->
+			<search position="before"><![CDATA[$product_option_value_data[] = array(]]></search>
+			<add><![CDATA[$pod_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "myoc_pod` WHERE product_option_value_id = '" . (int)$product_option_value['product_option_value_id'] . "' ORDER BY priority, quantity");]]></add>
+		</operation>
+		<operation> <!-- load POD -->
+			<search position="after"><![CDATA[$product_option_value_data[] = array(]]></search>
+			<add><![CDATA['pod' => $pod_query->rows,]]></add>
+		</operation>
+		<operation> <!-- load POD setting -->
+			<search position="after"><![CDATA[$product_option_data[] = array(]]></search>
+			<add><![CDATA['show_price_product' => $product_option['show_price_product'],
+				'show_price_cart' => $product_option['show_price_cart'],
+				'show_final' => $product_option['show_final'],
+				'table_style' => $product_option['table_style'],
+				'price_format' => $product_option['price_format'],
+				'qty_column' => $product_option['qty_column'],
+				'qty_format' => $product_option['qty_format'],
+				'stock_column' => $product_option['stock_column'],
+				'qty_cart' => $product_option['qty_cart'],
+				'flat_rate' => $product_option['flat_rate'],]]></add>
+        </operation>
+	</file>
+	<file name="admin/controller/catalog/product.php">
+		<operation> <!-- load POD -->
+			<search position="after"><![CDATA[$product_option_value_data[] = array(]]></search>
+			<add><![CDATA['pods' => isset($product_option_value['pod']) ? $product_option_value['pod'] : array(),]]></add>
+		</operation>
+		<operation> <!-- load POD setting -->
+			<search position="after"><![CDATA[$this->data['product_options'][] = array(]]></search>
+			<add><![CDATA['show_price_product' => $product_option['show_price_product'],
+				'show_price_cart' => $product_option['show_price_cart'],
+				'show_final' => $product_option['show_final'],
+				'table_style' => $product_option['table_style'],
+				'price_format' => $product_option['price_format'],
+				'qty_column' => $product_option['qty_column'],
+				'qty_format' => $product_option['qty_format'],
+				'stock_column' => $product_option['stock_column'],
+				'qty_cart' => $product_option['qty_cart'],
+				'flat_rate' => $product_option['flat_rate'],]]></add>
+		</operation>
+	</file>
+	<file name="admin/view/template/catalog/product_form.tpl">
+		<operation> <!-- POD table CSS -->
+			<search position="before"><![CDATA[<div id="content">]]></search>
+			<add><![CDATA[<?php $this->language->load('module/myocpod'); ?>
+				<style type="text/css">
+				.button,
+				.nowrap {
+					white-space: nowrap;
+				}
+				.pod-list {
+					margin: 5px 0;
+				}
+				.list tbody tr:hover td table.pod-list tbody tr:hover td {
+					background-color: #FFFFCB;
+				}
+				.list tbody tr:hover td table tr td {
+					background-color: #FFF;
+				}
+				.list tbody tr:hover td table thead tr td,
+				.pod-list thead tr td {
+					background-color: #FAFAFA;
+				}
+				</style>
+				<?php $pod_row = 0; ?>]]></add>
+		</operation>
+		<operation> <!-- POD setting controls -->
+			<search position="before"><![CDATA[<?php if ($product_option['type'] == 'text']]></search>
+			<add><![CDATA[<?php if ($product_option['type'] == 'select' || $product_option['type'] == 'radio' || $product_option['type'] == 'checkbox' || $product_option['type'] == 'image') { ?>
+				<tr>
+					<td><?php echo $this->language->get('entry_show_price_product'); ?></td>
+					<td>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][show_price_product]" value="1"<?php if ($product_option['show_price_product']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_yes; ?></label>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][show_price_product]" value="0"<?php if (!$product_option['show_price_product']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_no; ?></label>
+					</td>
+				</tr>
+				<tr>
+					<td><?php echo $this->language->get('entry_show_price_cart'); ?></td>
+					<td>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][show_price_cart]" value="1"<?php if ($product_option['show_price_cart']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_yes; ?></label>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][show_price_cart]" value="0"<?php if (!$product_option['show_price_cart']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_no; ?></label>
+					</td>
+				</tr>
+				<tr>
+					<td><?php echo $this->language->get('entry_show_final'); ?></td>
+					<td>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][show_final]" value="1"<?php if ($product_option['show_final']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_yes; ?></label>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][show_final]" value="0"<?php if (!$product_option['show_final']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_no; ?></label>
+					</td>
+				</tr>
+				<tr>
+					<td><?php echo $this->language->get('entry_flat_rate'); ?></td>
+					<td>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][flat_rate]" value="1"<?php if ($product_option['flat_rate']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_yes; ?></label>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][flat_rate]" value="0"<?php if (!$product_option['flat_rate']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_no; ?></label>
+					</td>
+				</tr>
+				<tr>
+					<td><?php echo $this->language->get('entry_table_style'); ?></td>
+					<td>
+						<select name="product_option[<?php echo $option_row; ?>][table_style]">
+							<option value="h"<?php if ($product_option['table_style'] == 'h') { ?> selected="selected"<?php } ?>><?php echo $this->language->get('text_horizontal'); ?></option>
+							<option value="v"<?php if ($product_option['table_style'] == 'v') { ?> selected="selected"<?php } ?>><?php echo $this->language->get('text_vertical'); ?></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td><?php echo $this->language->get('entry_price_format'); ?></td>
+					<td>
+						<select name="product_option[<?php echo $option_row; ?>][price_format]">
+							<option value="unit"<?php if ($product_option['price_format'] == 'unit') { ?> selected="selected"<?php } ?>><?php echo $this->language->get('text_unit'); ?></option>
+							<option value="total"<?php if ($product_option['price_format'] == 'total') { ?> selected="selected"<?php } ?>><?php echo $this->language->get('text_total'); ?></option>
+							<option value="both"<?php if ($product_option['price_format'] == 'both') { ?> selected="selected"<?php } ?>><?php echo $this->language->get('text_both'); ?></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td><?php echo $this->language->get('entry_qty_column'); ?></td>
+					<td>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][qty_column]" value="1"<?php if ($product_option['qty_column']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_yes; ?></label>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][qty_column]" value="0"<?php if (!$product_option['qty_column']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_no; ?></label>
+					</td>
+				</tr>
+				<tr>
+					<td><?php echo $this->language->get('entry_qty_format'); ?></td>
+					<td>
+						<select name="product_option[<?php echo $option_row; ?>][qty_format]">
+							<option value="single"<?php if ($product_option['qty_format'] == 'single') { ?> selected="selected"<?php } ?>><?php echo $this->language->get('text_single'); ?></option>
+							<option value="range"<?php if ($product_option['qty_format'] == 'range') { ?> selected="selected"<?php } ?>><?php echo $this->language->get('text_range'); ?></option>
+						</select>
+					</td>
+				</tr>
+				<tr>
+					<td><?php echo $this->language->get('entry_stock_column'); ?></td>
+					<td>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][stock_column]" value="1"<?php if ($product_option['stock_column']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_yes; ?></label>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][stock_column]" value="0"<?php if (!$product_option['stock_column']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_no; ?></label>
+					</td>
+				</tr>
+				<tr>
+					<td><?php echo $this->language->get('entry_qty_cart'); ?></td>
+					<td>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][qty_cart]" value="1"<?php if ($product_option['qty_cart']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_yes; ?></label>
+						<label><input type="radio" name="product_option[<?php echo $option_row; ?>][qty_cart]" value="0"<?php if (!$product_option['qty_cart']) { ?> checked="checked"<?php } ?>>
+							<?php echo $text_no; ?></label>
+					</td>
+				</tr>
+				<?php } ?>]]></add>
+		</operation>
+		<operation> <!-- load POD into tables -->
+			<search position="before" offset="1" index="1"><![CDATA[<?php $option_value_row++; ?>]]></search>
+			<add><![CDATA[<tr>
+					<td colspan="7">
+						<p><?php echo $tab_option . ' ' . $tab_discount; ?>:</p>
+						<table class="list pod-list" id="pod<?php echo $option_value_row; ?>">
+							<thead>
+								<tr>
+									<td class="left"><?php echo $entry_customer_group; ?></td>
+									<td class="left nowrap"><?php echo $entry_quantity; ?><?php echo $this->language->get('entry_pod_quantity'); ?></td>
+									<td class="left"><?php echo $this->language->get('entry_option_base_price'); ?></td>
+									<td class="left"><?php echo $entry_price; ?></td>
+									<td class="left"><?php echo $tab_special; ?>:</td>
+									<td class="left"><?php echo $this->language->get('entry_option_base_points'); ?></td>
+									<td class="left"><?php echo $entry_option_points; ?></td>
+									<td class="left"><?php echo $entry_priority; ?></td>
+									<td class="left"><?php echo $tab_special . " " . $entry_date_start; ?></td>
+									<td class="left"><?php echo $tab_special . " " . $entry_date_end; ?></td>
+									<td></td>
+								</tr>
+							</thead>
+							<?php foreach($product_option_value['pods'] as $pod) { ?>
+							<tbody id="pod-row<?php echo $pod_row; ?>">
+								<tr>
+									<input type="hidden" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][pod_id]" value="<?php echo $pod['pod_id']; ?>">
+									<td class="left"><select name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][customer_group_id]">
+											<?php foreach ($customer_groups as $customer_group) { ?>
+											<option value="<?php echo $customer_group['customer_group_id']; ?>"<?php if($pod['customer_group_id'] == $customer_group['customer_group_id']) { ?> selected="selected"<?php } ?>><?php echo $customer_group['name']; ?></option>
+											<?php } ?>
+										</select></td>
+									<td class="right"><input type="text" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][quantity]" value="<?php echo $pod['quantity']; ?>" size="2"></td>
+									<td class="center"><input type="checkbox" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][option_base_price]"<?php if(isset($pod['option_base_price']) && $pod['option_base_price']) { ?> checked="checked"<?php } ?>></td>
+									<td class="right nowrap">
+										<select name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][price_prefix]">
+											<option value="+"<?php if($pod['price_prefix'] == "+") { ?> selected="selected"<?php } ?>>+</option>
+											<option value="-"<?php if($pod['price_prefix'] == "-") { ?> selected="selected"<?php } ?>>-</option>
+											<option value="="<?php if($pod['price_prefix'] == "=") { ?> selected="selected"<?php } ?>>=</option>
+											<option value="+%"<?php if($pod['price_prefix'] == "+%") { ?> selected="selected"<?php } ?>>+%</option>
+											<option value="-%"<?php if($pod['price_prefix'] == "-%") { ?> selected="selected"<?php } ?>>-%</option>
+										</select>
+										<input type="text" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][price]" value="<?php echo $pod['price']; ?>" size="5"></td>
+									<td class="right nowrap">
+										<select name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][special_prefix]">
+											<option value="+"<?php if($pod['special_prefix'] == "+") { ?> selected="selected"<?php } ?>>+</option>
+											<option value="-"<?php if($pod['special_prefix'] == "-") { ?> selected="selected"<?php } ?>>-</option>
+											<option value="="<?php if($pod['special_prefix'] == "=") { ?> selected="selected"<?php } ?>>=</option>
+											<option value="+%"<?php if($pod['special_prefix'] == "+%") { ?> selected="selected"<?php } ?>>+%</option>
+											<option value="-%"<?php if($pod['special_prefix'] == "-%") { ?> selected="selected"<?php } ?>>-%</option>
+										</select>
+										<input type="text" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][special]" value="<?php echo $pod['special']; ?>" size="5"></td>
+									<td class="center"><input type="checkbox" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][option_base_points]"<?php if(isset($pod['option_base_points']) && $pod['option_base_points']) { ?> checked="checked"<?php } ?>></td>
+									<td class="right nowrap">
+										<select name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][points_prefix]">
+											<option value="+"<?php if($pod['points_prefix'] == "+") { ?> selected="selected"<?php } ?>>+</option>
+											<option value="-"<?php if($pod['points_prefix'] == "-") { ?> selected="selected"<?php } ?>>-</option>
+											<option value="="<?php if($pod['points_prefix'] == "=") { ?> selected="selected"<?php } ?>>=</option>
+											<option value="+%"<?php if($pod['points_prefix'] == "+%") { ?> selected="selected"<?php } ?>>+%</option>
+											<option value="-%"<?php if($pod['points_prefix'] == "-%") { ?> selected="selected"<?php } ?>>-%</option>
+										</select>
+										<input type="text" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][points]" value="<?php echo $pod['points']; ?>" size="5"></td>
+									<td class="right"><input type="text" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][priority]" value="<?php echo $pod['priority']; ?>" size="2"></td>
+									<td class="left"><input type="text" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][date_start]" class="date" value="<?php echo $pod['date_start']; ?>" size="2"></td>
+									<td class="left"><input type="text" name="product_option[<?php echo $option_row; ?>][product_option_value][<?php echo $option_value_row; ?>][pod][<?php echo $pod_row; ?>][date_end]" class="date" value="<?php echo $pod['date_end']; ?>" size="2"></td>
+									<td class="left"><a onclick="$('#pod-row<?php echo $pod_row; ?>').remove();" class="button"><span><?php echo $button_remove; ?></span></a></td>
+								</tr>
+								<?php $pod_row++; ?>
+							</tbody>
+							<?php } ?>
+							<tbody class="tfoot">
+								<tr>
+									<td colspan="11" class="right"><a onclick="addOptionDiscount(<?php echo $option_row; ?>, <?php echo $option_value_row; ?>);" class="button"><span><?php echo $button_add_discount; ?></span></a></td>
+								</tr>
+							</tbody>
+						</table>
+					</td>
+				</tr>]]></add>
+		</operation>
+		<operation> <!-- javascript add POD setting when adding new option -->
+			<search position="before"><![CDATA[if (ui.item.type == 'text')]]></search>
+				<add><![CDATA[if (ui.item.type == 'select' || ui.item.type == 'radio' || ui.item.type == 'checkbox' || ui.item.type == 'image') {
+				html += '     <tr>';
+				html += '       <td><?php echo addslashes($this->language->get('entry_show_price_product')); ?></td>';
+				html += '       <td><label><input type="radio" name="product_option[' + option_row + '][show_price_product]" value="1" checked="checked">';
+				html += '           <?php echo $text_yes; ?></label>';
+				html += '         <label><input type="radio" name="product_option[' + option_row + '][show_price_product]" value="0">';
+				html += '           <?php echo $text_no; ?></label>';
+				html += '       </td>';
+				html += '     </tr>';
+				html += '     <tr>';
+				html += '       <td><?php echo addslashes($this->language->get('entry_show_price_cart')); ?></td>';
+				html += '       <td><label><input type="radio" name="product_option[' + option_row + '][show_price_cart]" value="1" checked="checked">';
+				html += '           <?php echo $text_yes; ?></label>';
+				html += '         <label><input type="radio" name="product_option[' + option_row + '][show_price_cart]" value="0">';
+				html += '           <?php echo $text_no; ?></label>';
+				html += '       </td>';
+				html += '     </tr>';
+				html += '     <tr>';
+				html += '       <td><?php echo addslashes($this->language->get('entry_show_final')); ?></td>';
+				html += '       <td><label><input type="radio" name="product_option[' + option_row + '][show_final]" value="1">';
+				html += '           <?php echo $text_yes; ?></label>';
+				html += '         <label><input type="radio" name="product_option[' + option_row + '][show_final]" value="0" checked="checked">';
+				html += '           <?php echo $text_no; ?></label>';
+				html += '       </td>';
+				html += '     </tr>';
+				html += '     <tr>';
+				html += '       <td><?php echo addslashes($this->language->get('entry_flat_rate')); ?></td>';
+				html += '       <td><label><input type="radio" name="product_option[' + option_row + '][flat_rate]" value="1">';
+				html += '           <?php echo $text_yes; ?></label>';
+				html += '         <label><input type="radio" name="product_option[' + option_row + '][flat_rate]" value="0" checked="checked">';
+				html += '           <?php echo $text_no; ?></label>';
+				html += '       </td>';
+				html += '     </tr>';
+				html += '     <tr>';
+				html += '       <td><?php echo addslashes($this->language->get('entry_table_style')); ?></td>';
+				html += '       <td>';
+				html += '         <select name="product_option[' + option_row + '][table_style]">';
+				html += '           <option value="h" selected="selected"><?php echo addslashes($this->language->get('text_horizontal')); ?></option>';
+				html += '           <option value="v"><?php echo addslashes($this->language->get('text_vertical')); ?></option>';
+				html += '         </select>';
+				html += '       </td>';
+				html += '     </tr>';
+				html += '     <tr>';
+				html += '       <td><?php echo addslashes($this->language->get('entry_price_format')); ?></td>';
+				html += '       <td>';
+				html += '         <select name="product_option[' + option_row + '][price_format]">';
+				html += '           <option value="unit"><?php echo addslashes($this->language->get('text_unit')); ?></option>';
+				html += '           <option value="total" selected="selected"><?php echo addslashes($this->language->get('text_total')); ?></option>';
+				html += '           <option value="both"><?php echo addslashes($this->language->get('text_both')); ?></option>';
+				html += '         </select>';
+				html += '       </td>';
+				html += '     </tr>';				
+				html += '     <tr>';
+				html += '       <td><?php echo addslashes($this->language->get('entry_qty_column')); ?></td>';
+				html += '       <td><label><input type="radio" name="product_option[' + option_row + '][qty_column]" value="1" checked="checked">';
+				html += '           <?php echo $text_yes; ?></label>';
+				html += '         <label><input type="radio" name="product_option[' + option_row + '][qty_column]" value="0">';
+				html += '           <?php echo $text_no; ?></label>';
+				html += '       </td>';
+				html += '     </tr>';
+				html += '     <tr>';
+				html += '       <td><?php echo addslashes($this->language->get('entry_qty_format')); ?></td>';
+				html += '       <td>';
+				html += '           <select name="product_option[' + option_row + '][qty_format]">';
+				html += '               <option value="single" selected="selected"><?php echo $this->language->get('text_single'); ?></option>';
+				html += '               <option value="range"><?php echo $this->language->get('text_range'); ?></option>';
+				html += '           </select>';
+				html += '       </td>';
+				html += '     </tr>';
+				html += '     <tr>';
+				html += '       <td><?php echo $this->language->get('entry_stock_column'); ?></td>';
+				html += '       <td>';
+				html += '           <label><input type="radio" name="product_option[' + option_row + '][stock_column]" value="1">';
+				html += '               <?php echo $text_yes; ?></label>';
+				html += '           <label><input type="radio" name="product_option[' + option_row + '][stock_column]" value="0" checked="checked">';
+				html += '               <?php echo $text_no; ?></label>';
+				html += '       </td>';
+				html += '     </tr>';
+				html += '     <tr>';
+				html += '       <td><?php echo addslashes($this->language->get('entry_qty_cart')); ?></td>';
+				html += '       <td><label><input type="radio" name="product_option[' + option_row + '][qty_cart]" value="1">';
+				html += '           <?php echo $text_yes; ?></label>';
+				html += '         <label><input type="radio" name="product_option[' + option_row + '][qty_cart]" value="0" checked="checked">';
+				html += '           <?php echo $text_no; ?></label>';
+				html += '       </td>';
+				html += '     </tr>';
+			}]]></add>
+		</operation>
+		<operation> <!-- javascript add POD control inside addOptionValue() function -->
+			<search position="after"><![CDATA[$('#option-value' + option_row + ' tfoot').before(html);]]></search>
+			<add><![CDATA[html =  '  <tr>';
+				html += '    <td colspan="7">';
+				html += '      <p><?php echo $tab_option . ' ' . $tab_discount; ?>:</p>';
+				html += '      <table class="list pod-list" id="pod' + option_value_row + '">';
+				html += '        <thead>';
+				html += '          <tr>';
+				html += '            <td class="left"><?php echo $entry_customer_group; ?></td>';
+				html += '            <td class="left nowrap"><?php echo $entry_quantity; ?><?php echo addslashes($this->language->get('entry_pod_quantity')); ?>';
+				html += '            <td class="left"><?php echo addslashes($this->language->get('entry_option_base_price')); ?></td>';
+				html += '            <td class="left"><?php echo $entry_price; ?></td>';
+				html += '            <td class="left"><?php echo $tab_special; ?>:</td>';
+				html += '            <td class="left"><?php echo addslashes($this->language->get('entry_option_base_points')); ?></td>';
+				html += '            <td class="left"><?php echo $entry_option_points; ?></td>';
+				html += '            <td class="left"><?php echo $entry_priority; ?></td>';
+				html += '            <td class="left"><?php echo $tab_special . " " . $entry_date_start; ?></td>';
+				html += '            <td class="left"><?php echo $tab_special . " " . $entry_date_end; ?></td>';
+				html += '            <td></td>';
+				html += '          </tr>';
+				html += '        </thead>';
+				html += '        <tbody class="tfoot">';
+				html += '          <tr>';
+				html += '            <td colspan="11" class="right"><a onclick="addOptionDiscount(' + option_row + ', ' + option_value_row + ');" class="button"><span><?php echo $button_add_discount; ?></span></a></td>';
+				html += '          </tr>';
+				html += '        </tbody>';
+				html += '       </table>';
+				html += '    </td>';
+				html += '  </tr>';
+
+				$('#option-value-row' + option_value_row).append(html);]]></add>
+		</operation>
+		<operation> <!-- javascript add POD row addOptionDiscount() function -->
+			<search position="before"><![CDATA[function addDiscount(]]></search>
+			<add><![CDATA[var pod_row = <?php echo $pod_row; ?>;
+				function addOptionDiscount(opt_row, ov_row) {
+					html  = '<tbody id="pod-row' + pod_row + '">';
+					html += '  <tr>';
+					html += '    <td class="left"><select name="product_option[' + opt_row + '][product_option_value][' + ov_row + '][pod][' + pod_row + '][customer_group_id]">';
+					<?php foreach ($customer_groups as $customer_group) { ?>
+					html += '      <option value="<?php echo $customer_group['customer_group_id']; ?>"><?php echo addslashes($customer_group['name']); ?></option>';
+					<?php } ?>
+					html += '    </select></td>';		
+					html += '    <td class="right"><input type="text" name="product_option[' + opt_row + '][product_option_value][' + ov_row + '][pod][' + pod_row + '][quantity]" value="1" size="2"></td>';
+					html += '    <td class="center"><input type="checkbox" name="product_option[' + opt_row + '][product_option_value][' + ov_row + '][pod][' + pod_row + '][option_base_price]"></td>';
+					html += '    <td class="right nowrap">';
+					html += '        <select name="product_option[' + opt_row + '][product_option_value][' + ov_row + '][pod][' + pod_row + '][price_prefix]">';
+					html += '            <option value="+">+</option>';
+					html += '            <option value="-">-</option>';
+					html += '            <option value="=">=</option>';
+					html += '            <option value="+%">+%</option>';
+					html += '            <option value="-%">-%</option>';
+					html += '        </select>';
+					html += '        <input type="text" name="product_option[' + opt_row + '][product_option_value][' + ov_row + '][pod][' + pod_row + '][price]" value="0" size="5"></td>';
+					html += '    <td class="right nowrap">';
+					html += '        <select name="product_option[' + opt_row + '][product_option_value][' + ov_row + '][pod][' + pod_row + '][special_prefix]">';
+					html += '            <option value="+">+</option>';
+					html += '            <option value="-" selected="selected">-</option>';
+					html += '            <option value="=">=</option>';
+					html += '            <option value="+%">+%</option>';
+					html += '            <option value="-%">-%</option>';
+					html += '        </select>';
+					html += '        <input type="text" name="product_option[' + opt_row + '][product_option_value][' + ov_row + '][pod][' + pod_row + '][special]" value="0" size="5"></td>';
+					html += '    <td class="center"><input type="checkbox" name="product_option[' + opt_row + '][product_option_value][' + ov_row + '][pod][' + pod_row + '][option_base_points]"></td>';
+					html += '    <td class="right nowrap">';
+					html += '        <select name="product_option[' + opt_row + '][product_option_value][' + ov_row + '][pod][' + pod_row + '][points_prefix]">';
+					html += '            <option value="+">+</option>';
+					html += '            <option value="-">-</option>';
+					html += '            <option value="=">=</option>';
+					html += '            <option value="+%">+%</option>';
+					html += '            <option value="-%">-%</option>';
+					html += '        </select>';
+					html += '        <input type="text" name="product_option[' + opt_row + '][product_option_value][' + ov_row + '][pod][' + pod_row + '][points]" value="0" size="5"></td>';
+					html += '    <td class="right"><input type="text" name="product_option[' + opt_row + '][product_option_value][' + ov_row + '][pod][' + pod_row + '][priority]" value="1" size="2"></td>';
+					html += '    <td class="left"><input type="text" name="product_option[' + opt_row + '][product_option_value][' + ov_row + '][pod][' + pod_row + '][date_start]" class="date" value="" size="2"></td>';
+					html += '    <td class="left"><input type="text" name="product_option[' + opt_row + '][product_option_value][' + ov_row + '][pod][' + pod_row + '][date_end]" class="date" value="" size="2"></td>';
+					html += '    <td class="left"><a onclick="$(\'#pod-row' + pod_row + '\').remove();" class="button"><span><?php echo $button_remove; ?></span></a></td>';
+					html += '  </tr>';
+					html += '</tbody>';
+
+					$('#pod' + ov_row + ' .tfoot').before(html);
+
+					$('#pod-row' + pod_row + ' .date').datepicker({dateFormat: 'yy-mm-dd'});
+
+					pod_row++;
+				}]]></add>
+		</operation>
+	</file>
+	<file name="catalog/controller/*/cart.php,catalog/controller/checkout/checkout.php" error="skip">
+		<operation error="skip"> <!-- get tax_class_id -->
+			<search position="before" index="1,3"><![CDATA[$option_data[] = array(]]></search>
+			<add><![CDATA[$tax_class_id = isset($product['tax_class_id']) ? $product['tax_class_id'] : $result['tax_class_id'];]]></add>
+		</operation>
+		<operation error="skip"> <!-- calculate option price & option special -->
+			<search position="after" index="1,3"><![CDATA[$option_data[] = array(]]></search>
+			<add><![CDATA['price' => (float)$option['price'] ? $option['price_prefix'] . $this->currency->format($this->tax->calculate($option['price'], $tax_class_id, $this->config->get('config_tax'))) : false,
+				'special' => (isset($option['special']) && $option['special'] !== false) ? $option['special_prefix'] . $this->currency->format($this->tax->calculate($option['special'], $tax_class_id, $this->config->get('config_tax'))) : false,]]></add>
+		</operation>
+	</file>
+	<file name="catalog/view/theme/*/template/*/cart.tpl" error="skip">
+		<operation> <!-- print out option price in bracket after option value name -->
+			<search position="replace"><![CDATA[<?php echo $option['value']; ?>]]></search>
+			<add><![CDATA[<?php echo $option['value']; ?> <?php echo $option['price'] ? '(' . ($option['special'] ? $option['special'] : $option['price']) . ')' : ''; ?>]]></add>
+		</operation>
+	</file>
+	<file name="catalog/controller/checkout/confirm.php">
+		<operation> <!-- include option price in bracket after option value name -->
+			<search position="after" index="1"><![CDATA[if ($option['type'] != 'file') {]]></search>
+			<add><![CDATA[if((float)$option['price']) {
+					$option['option_value'] .= ' (';
+					if(isset($option['special']) && $option['special'] !== false) {
+						$option['option_value'] .= $option['special_prefix'] . $this->currency->format($this->tax->calculate($option['special'], $product['tax_class_id'], $this->config->get('config_tax')));
+					} else {
+						$option['option_value'] .= $option['price_prefix'] . $this->currency->format($this->tax->calculate($option['price'], $product['tax_class_id'], $this->config->get('config_tax')));
+					}
+					$option['option_value'] .= ')';
+				}]]></add>
+			}
+		</operation>
+		<operation> <!-- calculate option price & option special -->
+			<search position="after"><![CDATA[$option_data[] = array(]]></search>
+			<add><![CDATA['price' => (float)$option['price'] ? $option['price_prefix'] . $this->currency->format($this->tax->calculate($option['price'], $product['tax_class_id'], $this->config->get('config_tax'))) : false,
+				'special' => (isset($option['special']) && $option['special'] !== false) ? $option['special_prefix'] . $this->currency->format($this->tax->calculate($option['special'], $product['tax_class_id'], $this->config->get('config_tax'))) : false,]]></add>
+		</operation>
+	</file>
+	<file name="catalog/view/theme/*/template/checkout/confirm.tpl">
+		<operation> <!-- print out option price in bracket after option value name -->
+			<search position="replace"><![CDATA[<?php echo $option['value']; ?>]]></search>
+			<add><![CDATA[<?php echo $option['value']; ?> <?php echo $option['price'] ? '(' . ($option['special'] ? $option['special'] : $option['price']) . ')' : ''; ?>]]></add>
+		</operation>
+	</file>
+	<file name="catalog/controller/product/product.php">
+		<operation> <!-- hide text_qty if any qty_cart is enabled -->
+			<search position="replace"><![CDATA[= $this->language->get('text_qty');]]></search>
+			<add><![CDATA[= $this->myocpod->isQtyCart($product_id) ? '' : $this->language->get('text_qty');]]></add>
+		</operation>
+		<operation> <!-- hide text_or if any qty_cart is enabled -->
+			<search position="replace"><![CDATA[= $this->language->get('text_or');]]></search>
+			<add><![CDATA[= $this->myocpod->isQtyCart($product_id) ? '' : $this->language->get('text_or');]]></add>
+		</operation>
+	</file>
+	<file name="catalog/view/theme/*/template/product/product.tpl">
+		<operation> <!-- replace <select> list with POD -->
+			<search position="replace"><![CDATA[<select name="option[]]></search>
+			<add><![CDATA[<?php if($this->myocpod->showPod($option['product_option_id'])) { 
+					echo $this->getChild('myoc/pod', array('product_option_id' => $option['product_option_id'])); ?>
+					<select style="display:none" disabled name="disabled[<?php } else { ?>
+					<select name="option[<?php } ?>]]></add>
+		</operation>
+		<operation> <!-- replace <input type="radio,checkbox,image"> with POD -->
+			<search position="before"><![CDATA[<?php foreach ($option['option_value'] as $option_value)]]></search>
+			<add><![CDATA[<?php if($this->myocpod->showPod($option['product_option_id']) && $option['type'] != 'select') {
+					echo $this->getChild('myoc/pod', array('product_option_id' => $option['product_option_id']));
+					$option['option_value'] = array();
+				} ?>]]></add>
+		</operation>
+		<operation error="skip"> <!-- replace 'Add to Cart' button jquery -->
+			<search position="after"><![CDATA[cart').bind('click', function() {]]></search>
+			<add><![CDATA[<?php if($this->myocpod->isQtyCart($product_id)) { ?>
+				});
+				$('.btn-podcart').click(function(e) {
+					e.preventDefault();
+					var product_option_id = $(this).data('cart-poid');
+					var product_option_value_id = $(this).data('cart-povid');
+					var quantity = $('#podqty' + product_option_value_id).val();
+					
+					$(':input[name="quantity"]').val(quantity);
+					$('input[name="option[' + product_option_id + ']"]').attr("disabled", "disabled");
+					$("#option-value-" + product_option_value_id).attr("disabled", false);
+				<?php } ?>]]></add>
+		</operation>
+		<operation error="skip"> <!-- quantity field verification -->
+			<search position="after" regex="true" index="1"><![CDATA[/data: \$\('.*input\[type=\\'checkbox\\']:checked/]]></search>
+			<add><![CDATA[<?php if($this->myocpod->isQtyCart($product_id)) { ?>
+				beforeSend: function(xhr, setting) {
+					if(parseInt(quantity) <= 0 || isNaN(parseInt(quantity))) {
+						$('.error').remove();
+						$('#option-' + product_option_id).after('<span class="error"><?php echo $this->language->get('error_quantity'); ?></span>');
+						return false;
+					}
+				},
+				<?php } ?>]]></add>
+		</operation>
+		<operation error="skip"> <!-- replace 'Add to Cart' ajax data & add quantity field verification -->
+			<search position="replace"><![CDATA[input[type=\'hidden\'],]]></search>
+			<add><![CDATA[input[type=\'hidden\']:not(:disabled),]]></add>
+		</operation>
+		<operation> <!-- change POD table data upon <select> list changes & bind qty_cart buttons -->
+			<search position="before"><![CDATA[<?php echo $content_bottom; ?>]]></search>
+			<add><![CDATA[<script type="text/javascript"><!--
+				$(document).ready(function() {
+					$('select[name^="option"]').change(function(){
+						if($(this).data('poid') != undefined) {
+							$('*[data-podpoid="' + $(this).data('poid') + '"]').hide();
+							if($(this).val() != "") {
+								$('*[data-podsel="' + $(this).data('poid') + '"]').hide();
+								$('*[data-podpovid="' + $(this).val() + '"]').show();
+								<?php if($this->myocpod->isQtyCart($product_id)) { ?>
+								if($("#podqty" + $(this).val()).length) {
+									$(':input[name="quantity"]').val($("#podqty" + $(this).val()).val());
+								}
+								<?php } ?>
+							} else {
+								$('*[data-podsel="' + $(this).data('poid') + '"]').show();
+							}
+						}
+					}).change();
+					<?php if($this->myocpod->isQtyCart($product_id)) { ?>
+					$(':input[name^="quantitypod"]').bind('input change keyup', function() {
+						//console.log($(':input[type="hidden"]:not(:disabled)').val());
+						$(':input[name="quantity"]').val($(this).val());
+						$('input[name="option[' + $(this).data('cart-poid') + ']"]').attr("disabled", "disabled");
+						$("#option-value-" + $(this).data('cart-povid')).attr("disabled", false);
+					});
+					<?php } ?>
+				});
+				//--></script>]]></add>
+		</operation>
+	</file>
+	<file name="system/library/cart.php">
+		<operation> <!-- include POD class -->
+			<search position="before"><![CDATA[class Cart]]></search>
+			<add><![CDATA[require_once(DIR_SYSTEM . 'library/myocpod.php');]]></add>
+		</operation>
+		<operation> <!-- register POD class -->
+			<search position="after"><![CDATA[public function __construct(]]></search>
+			<add><![CDATA[$registry->set('myocpod', new Myocpod($registry));
+				$this->myocpod = $registry->get('myocpod');]]></add>
+		</operation>
+		<operation> <!-- replace $option_data, $option_price, $option_points with POD data -->
+			<search position="before"><![CDATA[data[$key] = array(]]></search>
+			<add><![CDATA[$option_data = $this->myocpod->getOptionData($option_data, $price, $quantity);
+				$option_price = $this->myocpod->getOptionPrice($option_data, $price, $quantity);
+				$option_points = $this->myocpod->getOptionPoints($option_data, $price, $quantity);
+				$option_special = $this->myocpod->getOptionPrice($option_data, $price, $quantity, false);]]></add>
+		</operation>
+		<operation error="skip"> <!-- replace $option_price with $option_special for Live Price Update support -->
+			<search position="replace"><![CDATA['special' => ($special + $option_price),]]></search>
+			<add><![CDATA['special' => ($option_special == $option_price) ? ($special + $option_special) : ($price + $option_special),]]></add>
+		</operation>
+	</file>
+</modification>

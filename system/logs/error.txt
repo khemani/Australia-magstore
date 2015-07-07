@@ -1,0 +1,26 @@
+2015-06-27 9:23:27 - PHP Notice:  Undefined offset: 0 in D:\xampp\htdocs\164_magazines-america.com\server_files\admin\model\tool\export_import.php on line 811
+2015-06-27 9:23:27 - PHP ErrorException:  Error: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 2<br />Error No: 1064<br />INSERT INTO `oc_product_to_category` (`product_id`,`category_id`) VALUES 
+(2437,); in D:\xampp\htdocs\164_magazines-america.com\server_files\system\database\mysqli.php on line 41
+2015-06-27 9:27:26 - PHP Notice:  Undefined offset: 0 in D:\xampp\htdocs\164_magazines-america.com\server_files\admin\model\tool\export_import.php on line 811
+2015-06-27 9:27:26 - PHP ErrorException:  Error: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 2<br />Error No: 1064<br />INSERT INTO `oc_product_to_category` (`product_id`,`category_id`) VALUES 
+(2706,); in D:\xampp\htdocs\164_magazines-america.com\server_files\system\database\mysqli.php on line 41
+2015-07-01 21:33:42 - PHP Warning:  mysqli::query(): MySQL server has gone away in D:\xampp\htdocs\164_magazines-america.com\server_files\system\database\mysqli.php on line 17
+2015-07-01 21:33:42 - PHP Warning:  mysqli::query(): Error reading result set's header in D:\xampp\htdocs\164_magazines-america.com\server_files\system\database\mysqli.php on line 17
+2015-07-01 21:33:42 - PHP ErrorException:  Error: MySQL server has gone away<br />Error No: 2006<br />DELETE FROM `oc_myoc_pod_setting` WHERE product_option_id in (select product_option_id from `oc_product_option_value` where product_id = '221')  in D:\xampp\htdocs\164_magazines-america.com\server_files\system\database\mysqli.php on line 41
+2015-07-01 21:33:43 - PHP Fatal Error:  Uncaught exception 'ErrorException' with message 'Error: MySQL server has gone away<br />Error No: 2006<br />SELECT MIN(product_id) as min_product_id FROM `oc_product`' in D:\xampp\htdocs\164_magazines-america.com\server_files\system\database\mysqli.php:41
+Stack trace:
+#0 D:\xampp\htdocs\164_magazines-america.com\server_files\vqmod\vqcache\vq2-system_library_db.php(20): DBMySQLi->query('SELECT MIN(prod...')
+#1 D:\xampp\htdocs\164_magazines-america.com\server_files\admin\model\tool\export_import.php(4987): DB->query('SELECT MIN(prod...')
+#2 D:\xampp\htdocs\164_magazines-america.com\server_files\admin\controller\tool\export_import.php(297): ModelToolExportImport->getMinProductId()
+#3 D:\xampp\htdocs\164_magazines-america.com\server_files\admin\controller\tool\export_import.php(32): ControllerToolExportImport->getForm()
+#4 [internal function]: ControllerToolExportImport->upload()
+#5 D:\xampp\htdocs\164_magazines-america.com\server_files\vqmod\vqcache\vq2-system_engine_front.php(42): call_user_func_array(Array, A in D:\xampp\htdocs\164_magazines-america.com\server_files\system\database\mysqli.php on line 41
+2015-07-03 9:03:38 - PHP ErrorException:  Error: Duplicate entry '1335-128' for key 'PRIMARY'<br />Error No: 1062<br />INSERT INTO `oc_product_to_category` (`product_id`,`category_id`) VALUES 
+(1335,128),
+(1335,128); in D:\xampp\htdocs\164_magazines-america.com\server_files\system\database\mysqli.php on line 41
+2015-07-03 9:16:03 - PHP ErrorException:  Error: Duplicate entry '1335-128' for key 'PRIMARY'<br />Error No: 1062<br />INSERT INTO `oc_product_to_category` (`product_id`,`category_id`) VALUES 
+(1335,128),
+(1335,128); in D:\xampp\htdocs\164_magazines-america.com\server_files\system\database\mysqli.php on line 41
+2015-07-03 9:19:13 - PHP Notice:  Undefined offset: 0 in D:\xampp\htdocs\164_magazines-america.com\server_files\admin\model\tool\export_import.php on line 811
+2015-07-03 9:19:14 - PHP ErrorException:  Error: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near ')' at line 2<br />Error No: 1064<br />INSERT INTO `oc_product_to_category` (`product_id`,`category_id`) VALUES 
+(1574,); in D:\xampp\htdocs\164_magazines-america.com\server_files\system\database\mysqli.php on line 41
